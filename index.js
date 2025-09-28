@@ -6,7 +6,7 @@ const sgMail = require("@sendgrid/mail");
 const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000; // ✅ correction ici
 
 // Middlewares
 app.use(cors());
@@ -26,8 +26,7 @@ app.post("/send-email", async (req, res) => {
     // 1. Envoi de l’email via SendGrid
     const msg = {
       to: email,
-      from: "aakm9389@gmail.com"
-,
+      from: "aakm9389@gmail.com",
       subject: `Nouveau message de ${name}`,
       text: `Email: ${email}\nMessage:\n${message}`,
     };
