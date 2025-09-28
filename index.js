@@ -48,6 +48,9 @@ app.post("/send-email", async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur d’envoi ❌" });
   }
 });
+app.get("/", (req, res) => {
+  res.send("✅ Backend fonctionne sur Railway !");
+});
 
 // Lancer le serveur
 app.listen(PORT, () => {
