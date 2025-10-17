@@ -2,46 +2,32 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-
-dotenv.config();
-const app = express();
-
-// Middlewares
-app.use(cors());
-app.use(express.json());
-
-// Connexion MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connecté"))
-  .catch(err => console.error("❌ Erreur MongoDB :", err));
-
-// Modèle
 import Message from "./models/Message.js";
 
-// Route principale
-app.get("/", (req, res) => {
-  res.send("API Portfolio Backend fonctionne ✅");
-});
+dotenv.config();
 
-// Route pour le formulaire contact
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+// 🔗 Connexion à MongoDB Atlas
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connecté"))
+  .catch((err) => console.error("❌ Erreur de connexion MongoDB :", err));
+
+// 📩 Route pour recevoir les messages du formulaire
 app.post("/contact", async (req, res) => {
   try {
     const { name, email, message } = req.body;
-
-    if (!name || !email || !message) {
-      return res.status(400).json({ message: "Tous les champs sont requis." });
-    }
-
-    const newMsg = new Message({ name, email, message });
-    await newMsg.save();
-
-    res.json({ message: "Message envoyé avec succès ✅" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Erreur interne du serveur ❌" });
+    const newMessage = new Message({ name, email, message });
+    await newMessage.save();
+    res.status(200).json({ success: true, message: "Message reçu avec succès !" });
+  } catch (err) {
+    console.error("Erreur lors de l’envoi du message :", err);
+    res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 });
 
-// Lancement du serveur
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`🚀 Serveur démarré sur le port ${PORT}`));
